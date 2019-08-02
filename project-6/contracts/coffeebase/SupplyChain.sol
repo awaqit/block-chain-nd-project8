@@ -108,33 +108,35 @@ contract SupplyChain {
   }
  
   // Define a function 'sellItem' that allows a farmer to mark an item 'ForSale'
-  function sellItem(uint _upc, uint _price) public 
+  function sellItem(uint _upc, uint _price) public  
   // Call modifier to check if upc has passed previous supply chain stage
+  forSale
   // Call modifier to verify caller of this function
+  onlyOwner
   {
     // Update the appropriate fields
     items[_upc].itemState = State.ForSale
     // Emit the appropriate event
     emit ForSale(_upc);
-    
   }
 
   // Define a function 'buyItem' that allows the disributor to mark an item 'Sold'
   // Use the above defined modifiers to check if the item is available for sale, if the buyer has paid enough, 
   // and any excess ether sent is refunded back to the buyer
-  function buyItem(uint _upc) public payable 
+  function buyItem(uint _upc) public payable  
     // Call modifier to check if upc has passed previous supply chain stage
-    
+    forSale
     // Call modifer to check if buyer has paid enough
-    
+    paidEnough
     // Call modifer to send any excess ether back to buyer
-    
+    checkValue
     {
-    
     // Update the appropriate fields - ownerID, distributorID, itemState
     items[_upc].itemState = State.ForSale
     // Transfer money to farmer
-
+    uint _price = items[_upc].productPrice;
+    uint amount = _price - msg.value
+    items[_upc].consumerID.transfer(amount);
     // emit the appropriate event
     emit Sold(_upc);
   }
@@ -143,9 +145,9 @@ contract SupplyChain {
   // Use the above modifers to check if the item is sold
   function shipItem(uint _upc) public 
     // Call modifier to check if upc has passed previous supply chain stage
-    
+    sold
     // Call modifier to verify caller of this function
-    
+    onlyOwner
     {
     // Update the appropriate fields
     items[_upc].itemState = State.ForSale
@@ -157,7 +159,7 @@ contract SupplyChain {
   // Use the above modifiers to check if the item is shipped
   function receiveItem(uint _upc) public 
     // Call modifier to check if upc has passed previous supply chain stage
-    
+    shipped
     // Access Control List enforced by calling Smart Contract / DApp
     {
     // Update the appropriate fields - ownerID, retailerID, itemState
