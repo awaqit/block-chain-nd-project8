@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity >=0.4.24;
 // Define a contract 'Supplychain'
 contract SupplyChain {
 
@@ -34,7 +34,8 @@ contract SupplyChain {
     uint    productPrice; // Product Price
     State   itemState;  // Product State as represented in the enum above
     address distributorID;  // Metamask-Ethereum address of the Distributor
-    address pharmacyID; // Metamask-Ethereum address of the Retailer
+    address pharmacyID;
+    address consumerID; // Metamask-Ethereum address of the Retailer
   }
 
   // Define 8 events with the same 8 state values and accept 'upc' as input argument
@@ -110,12 +111,12 @@ contract SupplyChain {
   // Define a function 'sellItem' that allows a farmer to mark an item 'ForSale'
   function sellItem(uint _upc, uint _price) public  
   // Call modifier to check if upc has passed previous supply chain stage
-  forSale
+  forSale(_upc)
   // Call modifier to verify caller of this function
   onlyOwner
   {
     // Update the appropriate fields
-    items[_upc].itemState = State.ForSale
+    items[_upc].itemState = State.ForSale;
     // Emit the appropriate event
     emit ForSale(_upc);
   }
@@ -125,17 +126,17 @@ contract SupplyChain {
   // and any excess ether sent is refunded back to the buyer
   function buyItem(uint _upc) public payable  
     // Call modifier to check if upc has passed previous supply chain stage
-    forSale
+    forSale(_upc)
     // Call modifer to check if buyer has paid enough
-    paidEnough
+    paidEnough(_upc)
     // Call modifer to send any excess ether back to buyer
-    checkValue
+    checkValue(_upc)
     {
     // Update the appropriate fields - ownerID, distributorID, itemState
-    items[_upc].itemState = State.ForSale
+    items[_upc].itemState = State.ForSale;
     // Transfer money to farmer
     uint _price = items[_upc].productPrice;
-    uint amount = _price - msg.value
+    uint amount = _price - msg.value;
     items[_upc].consumerID.transfer(amount);
     // emit the appropriate event
     emit Sold(_upc);
@@ -145,12 +146,12 @@ contract SupplyChain {
   // Use the above modifers to check if the item is sold
   function shipItem(uint _upc) public 
     // Call modifier to check if upc has passed previous supply chain stage
-    sold
+    sold(_upc)
     // Call modifier to verify caller of this function
     onlyOwner
     {
     // Update the appropriate fields
-    items[_upc].itemState = State.ForSale
+    items[_upc].itemState = State.ForSale;
     // Emit the appropriate event
     emit Shipped(_upc);
   }
@@ -159,13 +160,13 @@ contract SupplyChain {
   // Use the above modifiers to check if the item is shipped
   function receiveItem(uint _upc) public 
     // Call modifier to check if upc has passed previous supply chain stage
-    shipped
+    shipped(_upc)
     // Access Control List enforced by calling Smart Contract / DApp
     {
     // Update the appropriate fields - ownerID, retailerID, itemState
     // items[_upc].ownerID = 
     // items[_upc].pharmacyID = 
-    items[_upc].itemState = State.ForSale
+    items[_upc].itemState = State.ForSale;
     // Emit the appropriate event
     emit Received(_upc);
   }
@@ -195,7 +196,7 @@ contract SupplyChain {
   uint    itemSKU,
   uint    itemUPC,
   uint    productID,
-  string  productNotes,
+  string  memory productNotes,
   uint    productPrice,
   uint    itemState,
   address distributorID,
