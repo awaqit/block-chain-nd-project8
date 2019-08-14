@@ -654,6 +654,8 @@ var contract = (function(module) {
   Contract._properties = {
     contract_name: {
       get: function() {
+        console.log(this._json);
+        console.log('---');
         return this._json.contract_name;
       },
       set: function(val) {

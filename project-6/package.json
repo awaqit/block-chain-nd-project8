@@ -11,10 +11,11 @@
   "author": "pk <pkrasam@gmail.com> (https://ipfs.infura.io/ipfs/QmSXiR9Khm3yo1J67nUopvVBxFJ8YGN2fUGZ34Etr3m92x/)",
   "license": "MIT",
   "devDependencies": {
-    "lite-server": "2.4.0"
+    "ethereumjs-wallet": "^0.6.3",
+    "lite-server": "2.4.0",
+    "truffle-wallet-provider": "0.0.5"
   },
-  "resolutions": {
-    "eth-lib/keccakjs/sha3": "^1.2.3",
-    "web3/web3-eth/web3-eth-accounts/scrypt.js": "^0.3.0"
+  "dependencies": {
+    "truffle-hdwallet-provider": "^1.0.16"
   }
 }
