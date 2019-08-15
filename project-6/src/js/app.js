@@ -88,11 +88,10 @@ App = {
         
         /// JSONfy the smart contracts
         $.getJSON(jsonSupplyChain, function(data) {
-            console.log('data',data);
+            
             var SupplyChainArtifact = data;
             App.contracts.SupplyChain = TruffleContract(SupplyChainArtifact);
             App.contracts.SupplyChain.setProvider(App.web3Provider);
-            
             App.fetchItemBufferOne();
             App.fetchItemBufferTwo();
             App.fetchEvents();
@@ -146,8 +145,11 @@ App = {
         App.contracts.SupplyChain.deployed().then(function(instance) {
             return instance.addItem(
                 App.upc, 
-                App.metamaskAccountID, 
-                App.productNotes
+                App.productNotes,
+                App.productPrice,
+                App.metamaskAccountID,
+                App.metamaskAccountID,
+                App.metamaskAccountID,                
             );
         }).then(function(result) {
             $("#ftc-item").text(result);

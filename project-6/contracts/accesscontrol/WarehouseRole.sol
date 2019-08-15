@@ -5,7 +5,7 @@ import "./Roles.sol";
 
 // Define a contract 'WarehouseRole' to manage this role - add, remove, check
 contract WarehouseRole {
-
+  using Roles for Roles.Role;
   // Define 2 events, one for Adding, and other for Removing
     event WarehouseAdded(address indexed account);
     event WarehouseRemoved(address indexed account);
@@ -34,7 +34,7 @@ contract WarehouseRole {
 
   // Define a function 'renounceWarehouse' to renounce this role
   function renounceWarehouse() public {
-    _removeWarehouse();
+    _removeWarehouse(msg.sender);
   }
 
   // Define an internal function '_addWarehouse' to add this role, called by 'addWarehouse'
