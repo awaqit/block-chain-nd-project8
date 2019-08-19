@@ -1,8 +1,15 @@
 pragma solidity >=0.4.24;
 
-contract SupplyChain {
+import "../core/Ownable.sol";
+import "../accesscontrol/ConsumerRole.sol";
+import "../accesscontrol/DistributorRole.sol";
+import "../accesscontrol/PharmacyRole.sol";
+import "../accesscontrol/WarehouseRole.sol";
 
-  address owner;
+contract SupplyChain is Ownable, ConsumerRole, DistributorRole,
+PharmacyRole, WarehouseRole{
+
+
   uint  upc;
   uint  sku;
 
@@ -40,10 +47,6 @@ contract SupplyChain {
   event Shipped(uint upc);
   event Received(uint upc);
 
-  modifier onlyOwner() {
-    require(msg.sender == owner);
-    _;
-  }
 
   modifier verifyCaller (address _address) {
     require(msg.sender == _address); 
@@ -84,18 +87,15 @@ contract SupplyChain {
   }
 
   constructor() public payable {
-    owner = msg.sender;
     sku = 1;
     upc = 1;
   }
 
   function kill() public {
-    if (msg.sender == owner) {
-      selfdestruct(owner);
-    }
+      selfdestruct(owner());
   }
 
-  function addItem(uint _upc, string memory _productNotes, uint _productPrice, address _distributorID, address _pharmacyID, address _consumerID) public
+  function addItem(uint _upc, string memory _productNotes, address _distributorID, address _pharmacyID, address _consumerID) onlyWarehouse public
   {
     items[sku] = Item({
             sku: sku,
@@ -103,7 +103,7 @@ contract SupplyChain {
             ownerID: msg.sender,
             productID: (sku + _upc),
             productNotes: _productNotes,
-            productPrice: _productPrice,
+            productPrice: 0,
             itemState: State.New,
             distributorID: _distributorID,
             pharmacyID: _pharmacyID,
@@ -118,11 +118,12 @@ contract SupplyChain {
   readyToSale(_upc)
   onlyOwner
   {
+    items[_upc].productPrice = _price;
     items[_upc].itemState = State.ForSale;
     emit ForSale(_upc);
   }
 
-  function buyItem(uint _upc) public payable
+  function buyItem(uint _upc) onlyConsumer public payable
     forSale(_upc)
     paidEnough(_upc)
     checkValue(_upc)
@@ -133,7 +134,7 @@ contract SupplyChain {
 
   function shipItem(uint _upc) public
     sold(_upc)
-    onlyOwner
+    onlyDistributor
     {
     items[_upc].itemState = State.Shipped;
     emit Shipped(_upc);
@@ -142,6 +143,7 @@ contract SupplyChain {
 
   function receiveItem(uint _upc) public
     shipped(_upc)
+    onlyPharmacy
     {
     items[_upc].itemState = State.Received;
     emit Received(_upc);

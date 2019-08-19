@@ -153,7 +153,6 @@ App = {
             );
         }).then(function(result) {
             $("#ftc-item").text(result);
-            console.log('addItem',result);
         }).catch(function(err) {
             console.log(err);
             console.log(err.message);

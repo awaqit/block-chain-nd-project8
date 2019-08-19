@@ -33,17 +33,12 @@ contract('SupplyChain', function(accounts) {
     ///(8) 0xe07b5ee5f738b2f87f88b99aac9c64ff1e0c7917
     ///(9) 0xbd3ff2e3aded055244d66544c9c059fa0851da44
 
-    console.log("ganache-cli accounts used here...")
-    console.log("Contract Owner: accounts[0] ", accounts[0])
-    console.log("Farmer: accounts[1] ", accounts[1])
-    console.log("Distributor: accounts[2] ", accounts[2])
-    console.log("Retailer: accounts[3] ", accounts[3])
-    console.log("Consumer: accounts[4] ", accounts[4])
+
 
     it("Testing smart contract function addItem()", async() => {
         const supplyChain = await SupplyChain.deployed()
     
-        await supplyChain.addItem(upc, productNotes, productPrice, distributorID, pharmacyID, consumerID)
+        await supplyChain.addItem(upc, productNotes, distributorID, pharmacyID, consumerID)
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
@@ -58,8 +53,6 @@ contract('SupplyChain', function(accounts) {
     it("Testing smart contract function sellItem()", async() => {
         const supplyChain = await SupplyChain.deployed()
         
-        await supplyChain.addItem(upc, productNotes, productPrice, distributorID, pharmacyID, consumerID)
-
         await supplyChain.sellItem(upc, productPrice);
 
 
@@ -75,8 +68,8 @@ contract('SupplyChain', function(accounts) {
     it("Testing smart contract function buyItem()", async() => {
 
         const supplyChain = await SupplyChain.deployed()
-        
-        await supplyChain.buyItem(upc, { from: accounts[4], value: twoEthers });
+        await supplyChain.addConsumer(consumerID);
+        await supplyChain.buyItem(upc, { from: consumerID, value: twoEthers });
 
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc);
         const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc);
