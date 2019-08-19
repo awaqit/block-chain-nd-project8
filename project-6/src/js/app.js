@@ -9,7 +9,8 @@ App = {
     productNotes: null,
     productPrice: 0,
     distributorID: "0x0000000000000000000000000000000000000000",
-    retailerID: "0x0000000000000000000000000000000000000000",
+    wareHouseID: "0x0000000000000000000000000000000000000000",
+    pharmacyID: "0x0000000000000000000000000000000000000000",
     consumerID: "0x0000000000000000000000000000000000000000",
 
     init: async function () {
@@ -24,8 +25,9 @@ App = {
         App.ownerID = $("#ownerID").val();
         App.productNotes = $("#productNotes").val();
         App.productPrice = $("#productPrice").val();
+        App.wareHouseID = $("#wareHouseID").val();
         App.distributorID = $("#distributorID").val();
-        App.retailerID = $("#retailerID").val();
+        App.pharmacyID = $("#pharmacyID").val();
         App.consumerID = $("#consumerID").val();
 
         console.log(
@@ -33,9 +35,10 @@ App = {
             App.upc,
             App.ownerID,  
             App.productNotes, 
-            App.productPrice, 
+            App.productPrice,
+            App.wareHouseID, 
             App.distributorID, 
-            App.retailerID, 
+            App.pharmacyID, 
             App.consumerID
         );
     },
